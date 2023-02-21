@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Menu from './Menu';
 import Categories from './Categories';
-import items from './data';
+// import items from './data';
+import useRecipeStore from './store/recipeStore';
 
 const App = () => {
-  const allCategories = ['all', ...new Set(items.map((item) => item.category))];
-  const [menuItems, setMenuItems] = useState(items);
-  const [categories, setCategories] = useState(allCategories);
+  // const allCategories = ['all', ...new Set(items.map((item) => item.category))];
+  // const [menuItems, setMenuItems] = useState(items);
+  // const [categories, setCategories] = useState(allCategories);
 
-  const filterItems = (category) => {
-    if (category === 'all') {
-      setMenuItems(items);
-      return;
-    }
-    const newItems = items.filter((item) => item.category === category);
-    setMenuItems(newItems);
-  };
+  const recipes = useRecipeStore((state) => state.allRecipes);
+  // const filteredRecipes = useRecipeStore((state) => state.filteredRecipes);
+  const categories = useRecipeStore((state) => state.categories);
+  const getRecipesAction = useRecipeStore((state) => state.getRecipesAction);
+  // const setCategories = useRecipeStore((state) => state.setCategories);
+  const setFilteredRecipesAction = useRecipeStore((state) => state.setFilteredRecipesAction);
+  console.log(recipes)
+
+  useEffect(() => {
+    getRecipesAction()
+  }, []);
+
+  useEffect(() => {
+    setFilteredRecipesAction(categories[0])
+  }, [recipes]);
 
   return (
     <main>
@@ -24,8 +32,8 @@ const App = () => {
           <h2>Our Menu</h2>
           <div className="underline"></div>
         </div>
-        <Categories categories={categories} filterItems={filterItems}  />
-        <Menu items={menuItems} />
+        <Categories />
+        <Menu />
       </section>
     </main>
   );
